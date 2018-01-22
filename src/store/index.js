@@ -2,7 +2,8 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { dbPlayers, dbPlays } from "../assets/database";
 Vue.use(Vuex);
-
+const audio = new Audio('http://soundbible.com/mp3/Door%20Buzzer-SoundBible.com-1567875395.mp3');
+audio.preload = "auto";
 const state = {
   game: {
     name: null,
@@ -37,7 +38,7 @@ const state = {
     allPlayers: [
       //must come from database
     ],
-    gameDuration: 15,
+    gameDuration: 10,
     actionButtons: [
       {
         actionText: "Cesta de 2",
@@ -46,6 +47,10 @@ const state = {
       {
         actionText: "Cesta de 3",
         action: "3PM"
+      },
+      {
+        actionText: "Assistência",
+        action: "AST"
       },
       {
         actionText: "Falta",
@@ -62,8 +67,17 @@ const getters = {
   getTeamName: state => team => {
     return state.game[team].name;
   },
-  getTeamScore: state => team => {
-    return state.game[team].score;
+  getTeamScores: state => {
+    let plays = state.game.plays;
+    return plays.reduce(function (acc, play) {
+      if (play.action === 'FGM') {
+        acc[play.team] += 2
+      } else if (play.action === '3PM') {
+        acc[play.team] += 3
+      }
+      return acc
+    }, { team1: 0, team2: 0 })
+
   },
   game: state => {
     return state.game;
@@ -87,9 +101,6 @@ const mutations = {
   CHANGE_TEAM_NAME(state, obj) {
     state.game[obj.team].name = obj.name;
   },
-  changeScore(state, obj) {
-    state.game[obj.team].score = obj.score;
-  },
   CLOCKTICK(state) {
     state.game.timeLeft--;
   },
@@ -103,7 +114,7 @@ const mutations = {
     state.timer = timer;
     state.game.gameOn = true;
     state.game.name = new Date().toISOString();
-    state.game.plays.length = 0;
+    
   },
   CLOCKSTOP(state) {
     clearInterval(state.timer);
@@ -120,6 +131,7 @@ const mutations = {
   },
   CLOCKRESET(state) {
     state.game.timeLeft = state.settings.gameDuration;
+    state.game.plays.length = 0;
   }
 };
 
@@ -138,23 +150,28 @@ const actions = {
     });
   },
   addPlay({ commit }, payload) {
-    dbPlays.put(payload)
-    .then(() => {
-      commit("ADD_PLAY", payload);
-    })
-    .catch(err => console.error(err));
+    dbPlays
+      .put(payload)
+      .then(() => {
+        commit("ADD_PLAY", payload);
+      })
+      .catch(err => console.error(err));
   },
   clockStart({ commit, state }) {
-    var timer = setInterval(function () {
+    var timer = setInterval(function() {
       if (state.game.timeLeft > 0) {
         commit("CLOCKTICK");
       } else {
         // kill timer
         commit("KILLTIMER");
         //play sound
-        console.log("insert buzzer sound here")
+        console.log("sound start");
+        audio.play();
+        console.log("sound end");
         // wait 5s and comit ENDGAME
-        setTimeout(() => { commit("ENDGAME");}, 5000);
+        setTimeout(() => {
+          commit("ENDGAME");
+        }, 5000);
       }
     }, 1000);
     if (state.game.timeLeft === state.settings.gameDuration) {
