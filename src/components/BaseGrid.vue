@@ -186,21 +186,21 @@ export default {
 
 html, body {
   box-sizing: border-box;
-  background-color: #222;
+  background-color: #ccc;
   margin: 0px;
   height: 100%;
 }
 .score1 {
     grid-area: s1;
     text-align: center;
-    background-color: #bbb;
+    background-color: #aaa;
     padding:4px;
     margin: 0 2px;
   }
   .score2 {
     grid-area: s2;
     text-align: center;
-    background-color: #bbb;
+    background-color: #aaa;
     padding:4px;
     margin: 0 2px;
   }
@@ -215,7 +215,7 @@ html, body {
   }
   .teamcontainer{
     height: 100%;
-    background-color: #bbb;
+    background-color: #aaa;
     margin: 0 2px;
     padding: 2px;
   }

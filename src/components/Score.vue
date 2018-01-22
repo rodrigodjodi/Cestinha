@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{getTeamScore(team)}}</h1>
+    <h1>{{getTeamScores[team]}}</h1>
     <p
       contenteditable="true"
       @input="updateName"
@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getTeamName', 'getTeamScore'
+      'getTeamName', 'getTeamScores'
     ])
   },
   updated () {
