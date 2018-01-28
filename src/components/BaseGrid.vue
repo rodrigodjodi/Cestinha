@@ -46,9 +46,10 @@
       </div>
 
       <div class="context">
-        <last-plays v-if="gameOn"/>
+      <button @click="lastPlays = !lastPlays">Banco/Jogadas</button>
+        <last-plays v-if="lastPlays"/>
 
-        <template v-else="gameOn">
+        <template v-else="lastPlays">
           <button
             @click="SelectPlayersModalVisible = true"
           >
@@ -70,6 +71,7 @@
             />
           </draggable>
         </template>
+        
       </div>
     </div>
 
@@ -114,6 +116,7 @@ export default {
   },
   data () {
     return {
+      lastPlays: false,
       actingPlayer: "",
       actionModalVisible : false,
       CreatePlayerModalVisible: false,

@@ -38,7 +38,7 @@ const state = {
     allPlayers: [
       //must come from database
     ],
-    gameDuration: 10,
+    gameDuration: 615,
     actionButtons: [
       {
         actionText: "Cesta de 2",
@@ -131,11 +131,27 @@ const mutations = {
   },
   CLOCKRESET(state) {
     state.game.timeLeft = state.settings.gameDuration;
-    state.game.plays.length = 0;
+    state.game.plays = [];
+  },
+  DELETE_PLAY(state, payload) {
+    let index = state.game.plays.findIndex(el => {
+      return el.index === payload
+    })
+    state.game.plays.splice(index, 1)
   }
 };
 
 const actions = {
+  deletePlay ({commit}, payload) {
+    return dbPlays.get(payload)
+    .then(function (doc) {
+      return dbPlays.remove(doc);
+    })
+    .then ( (response) => {
+      commit("DELETE_PLAY", response.id);
+    })
+
+  },
   createPlayer({ commit, dispatch }, payload) {
     //console.log(payload);
     return dbPlayers.put(payload); //returns a promise
